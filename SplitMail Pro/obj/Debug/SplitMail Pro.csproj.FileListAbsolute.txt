@@ -1,0 +1,9 @@
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\SplitMail Pro.exe.config
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\SplitMail Pro.exe
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\SplitMail Pro.pdb
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.csproj.AssemblyReference.cache
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail_Pro.Properties.Resources.resources
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.csproj.GenerateResource.cache
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.csproj.CoreCompileInputs.cache
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.exe
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.pdb

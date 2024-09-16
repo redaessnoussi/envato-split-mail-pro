@@ -1,27 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 using System.IO.Compression;
 
 namespace SplitMail_Pro
 {
     public partial class Form1 : Form
     {
-        private Dictionary<string, HashSet<string>> emailGroups;
-        private bool isComboList = false;
-        private string comboListDelimiter = ":";
+        private Dictionary<string, List<string[]>> emailGroups;
+        private string[] csvHeaders;
+        private bool isCSV = false;
+        private int emailColumnIndex = -1;
 
         public Form1()
         {
             InitializeComponent();
-            emailGroups = new Dictionary<string, HashSet<string>>();
+            emailGroups = new Dictionary<string, List<string[]>>();
+
+            toolTip.SetToolTip(chkComboList, "A combo list contains both emails and passwords, typically separated by a delimiter (e.g., email@example.com:password123)");
+
+            chkComboList.Checked = false;
+            grpDelimiter.Enabled = false;
+            chkRemovePassword.Enabled = false;
+
+            cboEmailColumn.SelectedIndexChanged += (sender, e) => {
+                if (cboEmailColumn.SelectedIndex != -1)
+                {
+                    emailColumnIndex = cboEmailColumn.SelectedIndex;
+                }
+            };
         }
 
         private async void btnSplitEmails_Click(object sender, EventArgs e)
@@ -36,20 +47,31 @@ namespace SplitMail_Pro
         private async Task SplitEmailsAsync()
         {
             emailGroups.Clear();
-            string[] emails = txtEmailList.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            string[] lines = txtEmailList.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            char delimiter = radColon.Checked ? ':' : ';';
 
             await Task.Run(() =>
             {
-                for (int i = 0; i < emails.Length; i++)
+                if (isCSV && lines.Length > 0)
                 {
-                    string email = emails[i];
-                    if (isComboList)
+                    csvHeaders = lines[0].Split(',');
+                    lines = lines.Skip(1).ToArray(); // Skip header row
+                }
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    string[] columns = isCSV ? lines[i].Split(',') : new[] { lines[i] };
+                    string email = isCSV && emailColumnIndex >= 0 ? columns[emailColumnIndex] : columns[0];
+
+                    if (chkComboList.Checked)
                     {
-                        string[] parts = email.Split(new[] { comboListDelimiter }, 2, StringSplitOptions.None);
-                        if (parts.Length > 0)
-                        {
-                            email = parts[0];
-                        }
+                        string[] parts = email.Split(new[] { delimiter }, 2);
+                        email = parts[0];
+                    }
+
+                    if (chkRemovePassword.Checked)
+                    {
+                        email = email.Split(new[] { delimiter }, 2)[0];
                     }
 
                     string[] emailParts = email.Split('@');
@@ -60,42 +82,21 @@ namespace SplitMail_Pro
 
                         if (!emailGroups.ContainsKey(esp))
                         {
-                            emailGroups[esp] = new HashSet<string>();
+                            emailGroups[esp] = new List<string[]>();
                         }
-                        emailGroups[esp].Add(email);
+
+                        emailGroups[esp].Add(isCSV ? columns : new[] { email });
                     }
 
                     if (i % 100 == 0)
                     {
-                        int progressPercentage = (int)((float)i / emails.Length * 100);
+                        int progressPercentage = (int)((float)i / lines.Length * 100);
                         this.Invoke((MethodInvoker)delegate {
                             progressBar.Value = progressPercentage;
                         });
                     }
                 }
             });
-        }
-
-        private void SplitEmails()
-        {
-            emailGroups.Clear();
-            string[] emails = txtEmailList.Text.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (string email in emails)
-            {
-                string[] emailParts = email.Split('@');
-                if (emailParts.Length == 2)
-                {
-                    string domain = emailParts[1].ToLower();
-                    string esp = GetESP(domain);
-
-                    if (!emailGroups.ContainsKey(esp))
-                    {
-                        emailGroups[esp] = new HashSet<string>();
-                    }
-                    emailGroups[esp].Add(email);
-                }
-            }
         }
 
         private string GetESP(string domain)
@@ -121,38 +122,8 @@ namespace SplitMail_Pro
 
         private void chkComboList_CheckedChanged(object sender, EventArgs e)
         {
-            isComboList = chkComboList.Checked;
-            if (isComboList)
-            {
-                string input = ShowInputDialog("Enter the delimiter for the combo list:", "Combo List Delimiter", ":");
-                if (!string.IsNullOrEmpty(input))
-                {
-                    comboListDelimiter = input;
-                }
-            }
-        }
-
-        private string ShowInputDialog(string prompt, string title, string defaultValue)
-        {
-            Form inputBox = new Form();
-            inputBox.Width = 300;
-            inputBox.Height = 150;
-            inputBox.FormBorderStyle = FormBorderStyle.FixedDialog;
-            inputBox.Text = title;
-            inputBox.StartPosition = FormStartPosition.CenterScreen;
-
-            Label label = new Label() { Left = 20, Top = 20, Text = prompt };
-            TextBox textBox = new TextBox() { Left = 20, Top = 50, Width = 200, Text = defaultValue };
-            Button confirmation = new Button() { Text = "Ok", Left = 20, Width = 100, Top = 80 };
-
-            confirmation.Click += (sender, e) => { inputBox.Close(); };
-            inputBox.Controls.Add(label);
-            inputBox.Controls.Add(textBox);
-            inputBox.Controls.Add(confirmation);
-
-            inputBox.ShowDialog();
-
-            return textBox.Text;
+            grpDelimiter.Enabled = chkComboList.Checked;
+            chkRemovePassword.Enabled = chkComboList.Checked;
         }
 
         private void DisplayEmailGroups()
@@ -168,13 +139,60 @@ namespace SplitMail_Pro
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                Filter = "Text files (*.txt)|*.txt|CSV files (*.csv)|*.csv|All files (*.*)|*.*",
+                Filter = "CSV files (*.csv)|*.csv|Text files (*.txt)|*.txt|All files (*.*)|*.*",
                 Title = "Select a file to import"
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                txtEmailList.Text = File.ReadAllText(openFileDialog.FileName);
+                ClearAllData();
+                string fileContent = File.ReadAllText(openFileDialog.FileName);
+                txtEmailList.Text = fileContent;
+                isCSV = Path.GetExtension(openFileDialog.FileName).ToLower() == ".csv";
+                if (isCSV)
+                {
+                    string[] lines = fileContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+                    if (lines.Length > 0)
+                    {
+                        csvHeaders = lines[0].Split(',');
+                        DisplayCSVPreview(fileContent);
+                        PopulateEmailColumnDropdown();
+                        radExportCSV.Checked = true;
+                    }
+                    else
+                    {
+                        MessageBox.Show("The CSV file is empty.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        isCSV = false;
+                    }
+                }
+                else
+                {
+                    dgvCSVPreview.DataSource = null;
+                    cboEmailColumn.Visible = false;
+                    lblEmailColumn.Visible = false;
+                    radExportTXT.Checked = true;
+                }
+            }
+        }
+
+        private void DisplayCSVPreview(string csvContent)
+        {
+            string[] lines = csvContent.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length > 0)
+            {
+                string[] headers = lines[0].Split(',');
+                DataTable dt = new DataTable();
+                foreach (string header in headers)
+                {
+                    dt.Columns.Add(header);
+                }
+
+                for (int i = 1; i < Math.Min(lines.Length, 11); i++) // Display up to 10 rows
+                {
+                    dt.Rows.Add(lines[i].Split(','));
+                }
+
+                dgvCSVPreview.DataSource = dt;
             }
         }
 
@@ -195,47 +213,133 @@ namespace SplitMail_Pro
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog
             {
-                Filter = "Zip file (*.zip)|*.zip",
-                Title = "Save emails"
+                Filter = "Zip files (*.zip)|*.zip",
+                Title = "Save emails",
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) // Start in My Documents
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
             {
-                using (var zipArchive = ZipFile.Open(saveFileDialog.FileName, ZipArchiveMode.Create))
+                try
                 {
-                    if (esp != null)
+                    using (var zipArchive = ZipFile.Open(saveFileDialog.FileName, ZipArchiveMode.Create))
                     {
-                        // Export specific ESP
-                        if (emailGroups.ContainsKey(esp))
+                        if (esp != null)
                         {
-                            var entry = zipArchive.CreateEntry($"{esp}.txt");
-                            using (var writer = new StreamWriter(entry.Open()))
+                            ExportESP(zipArchive, esp);
+                        }
+                        else
+                        {
+                            foreach (var group in emailGroups)
                             {
-                                foreach (var email in emailGroups[esp])
-                                {
-                                    writer.WriteLine(email);
-                                }
+                                ExportESP(zipArchive, group.Key);
                             }
                         }
                     }
-                    else
+                    MessageBox.Show("Emails exported successfully!", "Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    MessageBox.Show("You don't have permission to save in this location. Please choose a different location.", "Permission Denied", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    ExportEmails(esp); // Retry export
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"An error occurred while exporting: {ex.Message}", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void ExportESP(ZipArchive zipArchive, string esp)
+        {
+            if (!emailGroups.ContainsKey(esp)) return;
+
+            string extension = radExportCSV.Checked ? "csv" : "txt";
+            var entry = zipArchive.CreateEntry($"{esp}.{extension}");
+
+            using (var writer = new StreamWriter(entry.Open()))
+            {
+                if (radExportCSV.Checked && csvHeaders != null)
+                {
+                    writer.WriteLine(string.Join(",", csvHeaders));
+                }
+
+                foreach (var row in emailGroups[esp])
+                {
+                    try
                     {
-                        // Export all
-                        foreach (var group in emailGroups)
+                        if (radExportCSV.Checked)
                         {
-                            var entry = zipArchive.CreateEntry($"{group.Key}.txt");
-                            using (var writer = new StreamWriter(entry.Open()))
+                            writer.WriteLine(string.Join(",", row));
+                        }
+                        else
+                        {
+                            if (emailColumnIndex >= 0 && emailColumnIndex < row.Length)
                             {
-                                foreach (var email in group.Value)
-                                {
-                                    writer.WriteLine(email);
-                                }
+                                writer.WriteLine(row[emailColumnIndex]); // Write only the email for txt files
+                            }
+                            else
+                            {
+                                // Fallback to writing the first column if emailColumnIndex is invalid
+                                writer.WriteLine(row[0]);
                             }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error writing email: {ex.Message}", "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                MessageBox.Show("Emails exported successfully!", "Export Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void PopulateEmailColumnDropdown()
+        {
+            cboEmailColumn.Items.Clear();
+            if (csvHeaders != null && csvHeaders.Length > 0)
+            {
+                foreach (string header in csvHeaders)
+                {
+                    cboEmailColumn.Items.Add(header);
+                }
+                int emailIndex = Array.FindIndex(csvHeaders, h => h.ToLower().Contains("email"));
+                if (emailIndex != -1)
+                {
+                    cboEmailColumn.SelectedIndex = emailIndex;
+                    emailColumnIndex = emailIndex;
+                }
+                else
+                {
+                    cboEmailColumn.SelectedIndex = 0;
+                    emailColumnIndex = 0;
+                }
+                cboEmailColumn.Visible = true;
+                lblEmailColumn.Visible = true;
+            }
+            else
+            {
+                cboEmailColumn.Visible = false;
+                lblEmailColumn.Visible = false;
+                emailColumnIndex = 0;
+            }
+        }        
+
+        private void ClearAllData()
+        {
+            emailGroups.Clear();
+            csvHeaders = null;
+            isCSV = false;
+            emailColumnIndex = -1;
+            dgvCSVPreview.DataSource = null;
+            lstEmailGroups.Items.Clear();
+        }
+
+        private void txtEmailList_TextChanged(object sender, EventArgs e)
+        {
+            ClearAllData();
+            isCSV = false;
+            cboEmailColumn.Visible = false;
+            lblEmailColumn.Visible = false;
         }
     }
 }

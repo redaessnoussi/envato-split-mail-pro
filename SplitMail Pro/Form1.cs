@@ -6,10 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Compression;
+using MetroFramework.Forms;
+using MetroFramework.Controls;
+using MetroFramework.Components;
+using System.Drawing;
 
 namespace SplitMail_Pro
 {
-    public partial class Form1 : Form
+    public partial class Form1 : MetroFramework.Forms.MetroForm
     {
         private Dictionary<string, List<string[]>> emailGroups;
         private string[] csvHeaders;
@@ -19,8 +23,14 @@ namespace SplitMail_Pro
         public Form1()
         {
             InitializeComponent();
+            // Set Metro style and theme
+            this.StyleManager = new MetroFramework.Components.MetroStyleManager(this.components);
+            this.StyleManager.Theme = MetroFramework.MetroThemeStyle.Light;
+            this.StyleManager.Style = MetroFramework.MetroColorStyle.Blue;
+
             emailGroups = new Dictionary<string, List<string[]>>();
 
+            // Set tooltips
             toolTip.SetToolTip(chkComboList, "A combo list contains both emails and passwords, typically separated by a delimiter (e.g., email@example.com:password123)");
 
             chkComboList.Checked = false;
@@ -33,6 +43,33 @@ namespace SplitMail_Pro
                     emailColumnIndex = cboEmailColumn.SelectedIndex;
                 }
             };
+
+            // Apply custom styling
+            ApplyCustomStyling();
+        }
+
+        private void ApplyCustomStyling()
+        {
+            lstEmailGroups.BackColor = MetroFramework.MetroColors.White;
+            lstEmailGroups.Font = new Font("Segoe UI", 9F);
+
+            dgvCSVPreview.BackgroundColor = MetroFramework.MetroColors.White;
+            dgvCSVPreview.Font = new Font("Segoe UI", 9F);
+            dgvCSVPreview.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            dgvCSVPreview.EnableHeadersVisualStyles = false;
+            dgvCSVPreview.ColumnHeadersDefaultCellStyle.BackColor = MetroFramework.MetroColors.Silver;
+            dgvCSVPreview.ColumnHeadersDefaultCellStyle.ForeColor = MetroFramework.MetroColors.Black;
+        }
+
+        private void CustomizeMetroComponents()
+        {
+            // Customize Metro components here if needed
+            btnSplitEmails.UseCustomBackColor = true;
+            btnSplitEmails.UseCustomForeColor = true;
+            btnSplitEmails.BackColor = MetroFramework.MetroColors.Blue;
+            btnSplitEmails.ForeColor = System.Drawing.Color.White;
+
+            // You can add more customizations for other controls here
         }
 
         private async void btnSplitEmails_Click(object sender, EventArgs e)

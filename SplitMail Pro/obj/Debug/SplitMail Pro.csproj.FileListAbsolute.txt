@@ -8,3 +8,7 @@ C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\Split
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.exe
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.pdb
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail_Pro.Form1.resources
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\MetroFramework.Design.dll
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\MetroFramework.dll
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\MetroFramework.Fonts.dll
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMai.92B4308B.Up2Date

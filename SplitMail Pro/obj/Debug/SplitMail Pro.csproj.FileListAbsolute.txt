@@ -1,14 +1,18 @@
-C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\SplitMail Pro.exe.config
-C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\SplitMail Pro.exe
-C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\SplitMail Pro.pdb
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.csproj.AssemblyReference.cache
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail_Pro.Properties.Resources.resources
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.csproj.GenerateResource.cache
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.csproj.CoreCompileInputs.cache
-C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.exe
-C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail Pro.pdb
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMail_Pro.Form1.resources
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\MetroFramework.Design.dll
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\MetroFramework.dll
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\MetroFramework.Fonts.dll
 C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\SplitMai.92B4308B.Up2Date
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\Split Mail Pro.exe.config
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\Split Mail Pro.exe.manifest
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\Split Mail Pro.application
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\Split Mail Pro.exe
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\bin\Debug\Split Mail Pro.pdb
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\Split Mail Pro.exe.manifest
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\Split Mail Pro.application
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\Split Mail Pro.exe
+C:\Users\Reda Essnoussi\source\repos\SplitMail Pro\SplitMail Pro\obj\Debug\Split Mail Pro.pdb

@@ -23,6 +23,13 @@ namespace SplitMail_Pro
         public Form1()
         {
             InitializeComponent();
+
+            // Set the form icon
+            this.Icon = Properties.Resources.email_102148; // Replace YourIconName with the actual name of your icon resource
+
+            // Ensure the icon is used in the taskbar
+            this.ShowIcon = true;
+
             // Set Metro style and theme
             this.StyleManager = new MetroFramework.Components.MetroStyleManager(this.components);
             this.StyleManager.Theme = MetroFramework.MetroThemeStyle.Light;

@@ -79,14 +79,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Split Mail Pro.exe" size="94232">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Split Mail Pro.exe" size="162328">
       <assemblyIdentity name="Split Mail Pro" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>zXT0z8JhT8I4XItwmW+GTF1BKF+ODxfKjsUq2nFGusM=</dsig:DigestValue>
+        <dsig:DigestValue>T8MTzSNXDmJ2n6xUmp1aTCkxr2km9XP2nNR93B6pLmU=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -96,7 +96,7 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>UiCdo/qJmfskcUjsy35WGI3NIOFSyFR8UPKJ5zHTAKo=</dsig:DigestValue>
+      <dsig:DigestValue>9KlE/ygY+GsmoTxMVjC3qmllPhZ9BaEVu1XHVAuZpjc=</dsig:DigestValue>
     </hash>
   </file>
   <file name="Split Mail Pro.exe.config" size="234">

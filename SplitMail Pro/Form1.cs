@@ -101,21 +101,21 @@ namespace SplitMail_Pro
                     csvHeaders = lines[0].Split(',');
                     lines = lines.Skip(1).ToArray(); // Skip header row
                 }
+                else
+                {
+                    csvHeaders = null; // Ensure csvHeaders is null for non-CSV input
+                }
 
                 for (int i = 0; i < lines.Length; i++)
                 {
                     string[] columns = isCSV ? lines[i].Split(',') : new[] { lines[i] };
                     string email = isCSV && emailColumnIndex >= 0 ? columns[emailColumnIndex] : columns[0];
 
-                    if (chkComboList.Checked)
+                    // Only remove password if both checkboxes are checked
+                    if (chkRemovePassword.Checked && chkComboList.Checked)
                     {
                         string[] parts = email.Split(new[] { delimiter }, 2);
-                        email = parts[0];
-                    }
-
-                    if (chkRemovePassword.Checked)
-                    {
-                        email = email.Split(new[] { delimiter }, 2)[0];
+                        email = parts[0]; // Take only the email part
                     }
 
                     string[] emailParts = email.Split('@');
@@ -303,31 +303,55 @@ namespace SplitMail_Pro
 
             using (var writer = new StreamWriter(entry.Open()))
             {
-                if (radExportCSV.Checked && csvHeaders != null)
+                if (radExportCSV.Checked)
                 {
-                    writer.WriteLine(string.Join(",", csvHeaders));
+                    // Write CSV header
+                    if (csvHeaders != null && csvHeaders.Length > 0)
+                    {
+                        // If we have existing CSV headers, use them
+                        writer.WriteLine(string.Join(",", csvHeaders));
+                    }
+                    else
+                    {
+                        // If no existing headers (e.g., input was plain text), add "Email" header
+                        writer.WriteLine("Email");
+                    }
                 }
 
                 foreach (var row in emailGroups[esp])
                 {
                     try
                     {
+                        string lineToWrite;
                         if (radExportCSV.Checked)
                         {
-                            writer.WriteLine(string.Join(",", row));
-                        }
-                        else
-                        {
-                            if (emailColumnIndex >= 0 && emailColumnIndex < row.Length)
+                            if (row.Length > 1)
                             {
-                                writer.WriteLine(row[emailColumnIndex]); // Write only the email for txt files
+                                // If we have multiple columns, write them all
+                                lineToWrite = string.Join(",", row);
                             }
                             else
                             {
-                                // Fallback to writing the first column if emailColumnIndex is invalid
-                                writer.WriteLine(row[0]);
+                                // If we only have one column (email), just write that
+                                lineToWrite = row[0];
                             }
                         }
+                        else
+                        {
+                            // For TXT export, just write the email
+                            string email = emailColumnIndex >= 0 && emailColumnIndex < row.Length ? row[emailColumnIndex] : row[0];
+
+                            // Apply password removal only if checkbox is checked and it's a combo list
+                            if (chkRemovePassword.Checked && chkComboList.Checked)
+                            {
+                                char delimiter = radColon.Checked ? ':' : ';';
+                                string[] parts = email.Split(new[] { delimiter }, 2);
+                                email = parts[0]; // Take only the email part
+                            }
+
+                            lineToWrite = email;
+                        }
+                        writer.WriteLine(lineToWrite);
                     }
                     catch (Exception ex)
                     {
